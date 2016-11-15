@@ -1,0 +1,53 @@
+﻿@using BookTest.Extensions
+@using BookTest.Models
+@model IEnumerable<BookTest.Models.Author>
+
+@{
+    ViewBag.Title = "Index";
+    var queryOptions = (QueryOptions)ViewBag.QueryOptions;
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.BuildSortableLink("Id", "Index", "id", queryOptions)
+            </th>
+            <th>
+                @Html.BuildSortableLink("FirstName", "Index", "firstName", queryOptions)
+            </th>
+            <th>
+                @Html.BuildSortableLink("LastName", "Index", "lastName", queryOptions)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody data-bind="foreach:authors">
+        <tr>
+            <td data-bind="text:id"></td>
+            <td data-bind="text:firstName"></td>
+            <td data-bind="text:lastName"></td>
+            <td>
+                <a data-bind="attr:{href:'@(Url.Action("Details"))/'+id}" class="btn btn-info">Details</a>
+                <a data-bind="attr:{href:'@(Url.Action("Edit"))/'+id}" class="btn btn-primary">Edit</a>
+                <a data-bind="click:$parent.showDeleteModal,attr:{href:'@(Url.Action("Delete"))/'+id}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+@Html.BuildNextPreviousLinks(queryOptions, "index")
+@section scripts
+{
+        @Scripts.Render("~/Scripts/ViewModels/AuthorIndexViewModel.js")
+    
+    <script>
+        var viewModel = new AuthorIndexViewModel(@Html.HtmlConvertToJson(Model));
+        ko.applyBindings(viewModel);
+    </script>
+}
